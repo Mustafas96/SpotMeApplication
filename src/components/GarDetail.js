@@ -10,12 +10,12 @@ const GarDetail = (props) =>  {
 
     return (
 
-             <View style={styles.garDetail.containerStyle}>
+             <View style={styles.garDetail.containerStyle}> 
                <View style={styles.garDetail.garageStyle}>
                 <PerGarageInfo
-                    spotsNum={props.parking.id}
-                    garageName={props.parking.name}
-                    garageAddress={props.parking.email}
+                    spotsNum={props.parking.id} //gets parking.id from pergarage info
+                    garageName={props.parking.name} //gets gar name from ^^
+                    garageAddress={props.parking.email} //gets gar name from ^^
                 />
               </View>
            </View>

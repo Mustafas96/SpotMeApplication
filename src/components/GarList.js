@@ -18,7 +18,7 @@ import {
 
 import { connect } from "react-redux";
 
-import PerGarageInfo from './PerGarageInfo';
+import { PerGarageInfo } from './PerGarageInfo';
 import loadingImage from "../images/loading.gif";
 
 import styles from "./Styling.style.js";
@@ -29,10 +29,10 @@ class GarList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            parkingsName: '',
+            parkingsName: '',  //Null all gar info at first
             parkingsMax: 0,
             parkingsCurrent: 0,
-            status: 0, //0 = not loaded, 1 = loading, 2 = loaded
+            status: 0, //0 = not loaded, 1 = loading, 2 = loaded (for when gar info is loaded)
             bottom: new Animated.Value(-(styles.garList.containerStyle.height)),
         };
         this.slideUp = this.slideUp.bind(this);
@@ -45,16 +45,16 @@ class GarList extends Component {
             status: 1
         }, () => {
             axios.post('https://project-one-203604.appspot.com/garages/garage', {
-                name: searchName
+                name: searchName //post request to which garage pin is selected
             }).then(res => {
 
                 console.log('Found Garage Data: ' + searchName);
 
 
                 this.setState({
-                    parkingsName: res.data.name,
-                    parkingsMax: res.data.max,
-                    parkingsCurrent: res.data.current,
+                    parkingsName: res.data.name, //pull garage.name from API
+                    parkingsMax: res.data.max, //pull max space from API
+                    parkingsCurrent: res.data.current, //pull current spaces from API
                     status: 2
                 }, function () {
                     console.log("State has changed");
@@ -67,11 +67,11 @@ class GarList extends Component {
 
     whenDoneLoading() {
         console.log("WhenDoneLoading");
-        if (this.state.status == 2) {
+        if (this.state.status == 2) { //if gar info is loaded
             console.log("PerGarageInfo Loaded, Status: " + this.state.status);
             return (
                 <PerGarageInfo
-                    spotsNum={this.state.parkingsCurrent}
+                    spotsNum={this.state.parkingsCurrent} //set PerGarageInfo variables to api pulled data
                     garageName={this.state.parkingsName}
                     garageMax={this.state.parkingsMax}
                 />
@@ -128,22 +128,16 @@ class GarList extends Component {
         }
     }
 
-    componentDidUpdate(){
-        this.props.Up(false);
-        this.props.Down(false);
-    }
-
-    shouldComponentUpdate(newProps, newState) {
-        if (newProps.upClicked) {
+    componentDidUpdate() {
+        if (this.props.upClicked) {
             this.slideUp();
-            this.updateData(newProps.keySearch);
-            return true;
+            this.updateData(this.props.keySearch);
+            this.props.Up(false);
         }
-        if (newProps.downClicked) {
+        if (this.props.downClicked) {
             this.slideDown();
-            return true;
+            this.props.Down(false);
         }
-        return true;
     }
 
 
